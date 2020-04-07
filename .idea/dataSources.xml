@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="@BazaLodowka" uuid="920cba6b-7602-4ff0-a1fe-b56f5bf3ead0">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka</jdbc-url>
+    </data-source>
+  </component>
+</project>

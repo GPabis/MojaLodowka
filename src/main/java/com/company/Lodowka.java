@@ -5,8 +5,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
+import org.json.*;
 
-public class Lodowka {
+
+
+public class Lodowka extends MyHandler{
 
     private List<String> produktWLodowce;
     private List<String> markaWLodowce;
@@ -28,7 +31,7 @@ public class Lodowka {
 
     public void PobieraniePordoktowWLodowce(){
         try{
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "PgDrawrof97");
+            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
             Statement stmt = con.createStatement();
             ResultSet res = stmt.executeQuery("SELECT ZakupioneProdukty.IDproduktu, Produkty.Produkt, Produkty.Marka, Produkty.Kategoria, Produkty.Cena, Ilosc, DataWaznosci FROM ZakupioneProdukty INNER JOIN Produkty ON ZakupioneProdukty.IDproduktu = Produkty.IDproduktu");
             if (this.IDproduktuWLodowce!=null){
@@ -80,7 +83,7 @@ public class Lodowka {
         try{
             List<Integer> IDzakupow = new ArrayList<>();
             int ileDoOdjęcia = 0, iloscDoOdjeciaZOstatnichZakupow =0;
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "PgDrawrof97");
+            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
             Statement stmt = con.createStatement();
             String query = "SELECT * FROM ZakupioneProdukty WHERE IDproduktu = "+IDproduktuWLodowce;
             ResultSet res = stmt.executeQuery(query);
@@ -122,4 +125,23 @@ public class Lodowka {
         String queryUpdate = "UPDATE ZakupioneProdukty SET Ilosc=Ilosc-" +iloscDoOdjecia +" WHERE IDzakupow= " +IDzakupow.get(IDzakupow.size()-1) + " AND IDproduktu =" + idProduktu;
         return queryUpdate;
     }
+
+    public JSONObject ProduktyJSON(){
+        JSONObject produktyJson = new JSONObject();
+        JSONArray produkty = new JSONArray ();
+        for (int i = 0; i < this.produktWLodowce.size(); i++){
+            JSONObject produkt = new JSONObject();
+            produkt.put("produkt", this.produktWLodowce.get(i));
+            produkt.put("marka", this.markaWLodowce.get(i));
+            produkt.put("kategoria", this.kategoriaWLodowce.get(i));
+            produkt.put("ilosc", this.iloscWLodowce.get(i));
+            produkt.put("wartosc", this.cenaWLodowce.get(i));
+            produkt.put("dataWaznosci", this.dataWaznosciWLodowce.get(i));
+            produkt.put("id", this.IDproduktuWLodowce.get(i));
+            produkty.put(produkt);
+        }
+        produktyJson.put("produkty", produkty);
+        return produktyJson;
+    }
+
 }

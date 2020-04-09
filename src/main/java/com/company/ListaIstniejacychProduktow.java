@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.*;
 
+
 public class ListaIstniejacychProduktow extends Sklep{
     private List<Produkty> listaIstniejacychProduktow;
 
@@ -67,7 +68,7 @@ public class ListaIstniejacychProduktow extends Sklep{
 
         String zapytanieSelectProdukt = "SELECT * FROM Produkty WHERE IDproduktu = " + IDproduktu;
         try{
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "PgDrawrof97");
+            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
             Statement stmt = con.createStatement();
             ResultSet query = stmt.executeQuery(zapytanieSelectProdukt);
             if (query.next()){
@@ -91,7 +92,7 @@ public class ListaIstniejacychProduktow extends Sklep{
          */
 
         try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "PgDrawrof97");
+            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
             Statement stmt = con.createStatement();
             ResultSet query = stmt.executeQuery("SELECT COUNT(1) FROM Produkty");
             if (query.next()){
@@ -107,7 +108,7 @@ public class ListaIstniejacychProduktow extends Sklep{
 
     public int PobieranieIDPierwszegoProduktu(){
         try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "PgDrawrof97");
+            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
             Statement stmt = con.createStatement();
             ResultSet query = stmt.executeQuery("SELECT IDproduktu FROM Produkty");
             if (query.first()){
@@ -123,7 +124,7 @@ public class ListaIstniejacychProduktow extends Sklep{
 
     public int PobieranieIDOstatniegoProduktu(){
         try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "PgDrawrof97");
+            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
             Statement stmt = con.createStatement();
             ResultSet query = stmt.executeQuery("SELECT IDproduktu FROM Produkty");
             if (query.last()){

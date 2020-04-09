@@ -29,7 +29,7 @@ public class Sklep extends ProduktyWLodowce{
     static {
         try{
             Class.forName("com.mysql.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "PgDrawrof97");
+            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
             Statement stmt = con.createStatement();
             String tworzenieTabeliZakupy = "CREATE TABLE IF NOT EXISTS Zakupy" +
                     "(IDzakupow INT(3) NOT NULL AUTO_INCREMENT," +
@@ -227,7 +227,7 @@ public class Sklep extends ProduktyWLodowce{
     public void DodajZakupyDoBazyDanych(){
         try {
             if (this.listaProduktowWKoszyku.size()==0) throw new IndexOutOfBoundsException();
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "PgDrawrof97");
+            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
             Statement stmt = con.createStatement();
             PreparedStatement zakupyPrepStmt = con.prepareStatement("INSERT into Zakupy values (default,?)");
             zakupyPrepStmt.setDate(1,java.sql.Date.valueOf(this.dataZakupow));

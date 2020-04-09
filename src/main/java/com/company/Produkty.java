@@ -36,7 +36,7 @@ public class Produkty extends ListaIstniejacychProduktow{
     static {
         try{
             Class.forName("com.mysql.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "PgDrawrof97");
+            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
             Statement stmt = con.createStatement();
             String tworzenieTabeliProdukty = "CREATE TABLE IF NOT EXISTS Produkty" +
                     "(IDproduktu INT(3) NOT NULL AUTO_INCREMENT," +
@@ -95,7 +95,7 @@ public class Produkty extends ListaIstniejacychProduktow{
 
     public void DodajProduktDoBazyProduktow(){
         try{
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "PgDrawrof97");
+            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
             Statement stm = con.createStatement();
             ResultSet res = stm.executeQuery("SELECT * FROM Produkty");
             while (res.next()){

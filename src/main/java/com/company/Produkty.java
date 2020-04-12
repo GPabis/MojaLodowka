@@ -2,7 +2,7 @@ package com.company;
 
 import java.sql.*;
 
-public class Produkty extends ListaIstniejacychProduktow{
+public class Produkty extends ListaIstniejacychProduktow implements IConnectable{
     public String produkt;
     public String marka;
     public static int produktIDnumeracja = 100;
@@ -36,7 +36,7 @@ public class Produkty extends ListaIstniejacychProduktow{
     static {
         try{
             Class.forName("com.mysql.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
+            Connection con = IConnectable.connectDefault();
             Statement stmt = con.createStatement();
             String tworzenieTabeliProdukty = "CREATE TABLE IF NOT EXISTS Produkty" +
                     "(IDproduktu INT(3) NOT NULL AUTO_INCREMENT," +
@@ -94,28 +94,34 @@ public class Produkty extends ListaIstniejacychProduktow{
     }
 
     public void DodajProduktDoBazyProduktow(){
+        Connection con = IConnectable.connectDefault();
+        Statement stmt = null;
+        ResultSet res = null;
+        PreparedStatement ps = null;
         try{
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
-            Statement stm = con.createStatement();
-            ResultSet res = stm.executeQuery("SELECT * FROM Produkty");
+            stmt = con.createStatement();
+            res = stmt.executeQuery("SELECT * FROM Produkty");
             while (res.next()){
                 if (res.getString("Produkt").equalsIgnoreCase(this.produkt) && res.getString("Marka").equalsIgnoreCase(this.marka)){
                     throw new SQLException("Jest juz "+this.produkt + " Marki " + this.marka);
                 }
             }
-            PreparedStatement stmt = con.prepareStatement("insert into Produkty values(default ,?,?,?,?,?)");
-            stmt.setString(1, this.produkt);
-            stmt.setString(2, this.marka);
-            stmt.setString(3, this.przypisanaKategoria.name());
-            stmt.setDouble(4, this.cena);
-            stmt.setInt(5, this.iloscDniNimSiePrzeterminuje);
-            stmt.executeUpdate();
+            ps = con.prepareStatement("insert into Produkty values(default ,?,?,?,?,?)");
+            ps.setString(1, this.produkt);
+            ps.setString(2, this.marka);
+            ps.setString(3, this.przypisanaKategoria.name());
+            ps.setDouble(4, this.cena);
+            ps.setInt(5, this.iloscDniNimSiePrzeterminuje);
+            ps.executeUpdate();
         }
-        catch (Exception e){System.out.println(e);}
+        catch (Exception e){System.out.println(e);}finally {
+            IConnectable.ClosingConnection(con, ps, stmt, res);
+        }
     }
 
     public void ZmienProduktIDodajDoBazyProdoktow(String produkt, String marka, Kategoria kategoria, double cena, int iloscDniNimSiePrzeterminuje){
         ZmienProdukt(produkt, marka, kategoria, cena, iloscDniNimSiePrzeterminuje);
         DodajProduktDoBazyProduktow();
     }
+
 }

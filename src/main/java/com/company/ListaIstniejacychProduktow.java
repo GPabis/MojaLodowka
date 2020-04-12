@@ -7,7 +7,7 @@ import java.sql.Statement;
 import java.util.*;
 
 
-public class ListaIstniejacychProduktow extends Sklep{
+public class ListaIstniejacychProduktow extends Sklep implements IConnectable{
     private List<Produkty> listaIstniejacychProduktow;
 
     public ListaIstniejacychProduktow(){
@@ -67,20 +67,23 @@ public class ListaIstniejacychProduktow extends Sklep{
          */
 
         String zapytanieSelectProdukt = "SELECT * FROM Produkty WHERE IDproduktu = " + IDproduktu;
+        Connection con = IConnectable.connectDefault();
+        Statement stmt = null;
+        ResultSet res = null;
+        Produkty pobranyProdukt = null;
         try{
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
-            Statement stmt = con.createStatement();
-            ResultSet query = stmt.executeQuery(zapytanieSelectProdukt);
-            if (query.next()){
-                Produkty.Kategoria kategoria = Produkty.Kategoria.valueOf(query.getString(4));
-                Produkty pobranyProdukt = new Produkty(query.getString(2),query.getString(3), kategoria,query.getDouble(5), query.getInt(6));
-                pobranyProdukt.produktID = query.getInt(1);
-                return pobranyProdukt;
+            stmt = con.createStatement();
+            res = stmt.executeQuery(zapytanieSelectProdukt);
+            if (res.next()){
+                Produkty.Kategoria kategoria = Produkty.Kategoria.valueOf(res.getString(4));
+                pobranyProdukt = new Produkty(res.getString(2),res.getString(3), kategoria,res.getDouble(5), res.getInt(6));
+                pobranyProdukt.produktID = res.getInt(1);
             }
-            return null;
         }
-        catch (Exception e){System.out.println(e);}
-        return null;
+        catch (Exception e){System.out.println(e);}finally {
+            IConnectable.ClosingConnection(con, null, stmt, res);
+        }
+        return pobranyProdukt;
     }
 
     public int PobieranieRozmiaruTabeli(){
@@ -90,51 +93,61 @@ public class ListaIstniejacychProduktow extends Sklep{
          *
          * @return              int - number of rows it table Produkty
          */
-
+        Connection con = IConnectable.connectDefault();
+        Statement stmt = null;
+        ResultSet res = null;
+        int rozmiarTabeli = 0;
         try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
-            Statement stmt = con.createStatement();
-            ResultSet query = stmt.executeQuery("SELECT COUNT(1) FROM Produkty");
-            if (query.next()){
-                int rozmiarTabeli = query.getInt(1);
-                return rozmiarTabeli;
+            stmt = con.createStatement();
+            res = stmt.executeQuery("SELECT COUNT(1) FROM Produkty");
+            if (res.next()){
+                rozmiarTabeli = res.getInt(1);
             }
             System.out.println("Tabela Produkty Jest Pusta");
-            return 0;
         }
-        catch (Exception e){System.out.println(e);}
-        throw new IndexOutOfBoundsException();
+        catch (Exception e){System.out.println(e);}finally {
+            IConnectable.ClosingConnection(con, null, stmt, res);
+        }
+        if(rozmiarTabeli==0)System.out.println("Tabela Produkty Jest Pusta");
+        return rozmiarTabeli;
     }
 
     public int PobieranieIDPierwszegoProduktu(){
+        Connection con = IConnectable.connectDefault();
+        Statement stmt = null;
+        ResultSet res = null;
+        int numerPierwszegoIndexu = 0;
         try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
-            Statement stmt = con.createStatement();
-            ResultSet query = stmt.executeQuery("SELECT IDproduktu FROM Produkty");
-            if (query.first()){
-                int numerPierwszegoIndexu = query.getInt(1);
-                return numerPierwszegoIndexu;
+            stmt = con.createStatement();
+            res = stmt.executeQuery("SELECT IDproduktu FROM Produkty");
+            if (res.first()){
+                numerPierwszegoIndexu = res.getInt(1);
             }
-            System.out.println("Tabela Produkty Jest Pusta");
-            return 0;
         }
-        catch (Exception e){System.out.println(e);}
-        throw new IndexOutOfBoundsException();
+        catch (Exception e){System.out.println(e);}finally {
+            IConnectable.ClosingConnection(con, null, stmt, res);
+        }
+        if (numerPierwszegoIndexu==0) System.out.println("Tabela Produkty Jest Pusta");
+        return numerPierwszegoIndexu;
     }
 
     public int PobieranieIDOstatniegoProduktu(){
+        Connection con = IConnectable.connectDefault();
+        Statement stmt = null;
+        ResultSet res = null;
+        int numerOstatniegoIndexu = 0;
         try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
-            Statement stmt = con.createStatement();
-            ResultSet query = stmt.executeQuery("SELECT IDproduktu FROM Produkty");
-            if (query.last()){
-                int numerOstatniegoIndexu = query.getInt(1);
-                return numerOstatniegoIndexu;
+            stmt = con.createStatement();
+            res = stmt.executeQuery("SELECT IDproduktu FROM Produkty");
+            if (res.last()){
+                numerOstatniegoIndexu = res.getInt(1);
             }
             System.out.println("Tabela Produkty Jest Pusta");
-            return 0;
         }
-        catch (Exception e){System.out.println(e);}
-        throw new IndexOutOfBoundsException();
+        catch (Exception e){System.out.println(e);}finally {
+            IConnectable.ClosingConnection(con, null,stmt,res);
+        }
+        if (numerOstatniegoIndexu ==0)System.out.println("Tabela Produkty Jest Pusta");
+        return numerOstatniegoIndexu;
     }
 }

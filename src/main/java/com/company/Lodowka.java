@@ -9,7 +9,7 @@ import org.json.*;
 
 
 
-public class Lodowka extends MyHandler{
+public class Lodowka extends MyHandler implements IConnectable{
 
     private List<String> produktWLodowce;
     private List<String> markaWLodowce;
@@ -30,10 +30,12 @@ public class Lodowka extends MyHandler{
     }
 
     public void PobieraniePordoktowWLodowce(){
+        Connection con = IConnectable.connectDefault();
+        Statement stmt = null;
+        ResultSet res = null;
         try{
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
-            Statement stmt = con.createStatement();
-            ResultSet res = stmt.executeQuery("SELECT ZakupioneProdukty.IDproduktu, Produkty.Produkt, Produkty.Marka, Produkty.Kategoria, Produkty.Cena, Ilosc, DataWaznosci FROM ZakupioneProdukty INNER JOIN Produkty ON ZakupioneProdukty.IDproduktu = Produkty.IDproduktu");
+            stmt = con.createStatement();
+            res = stmt.executeQuery("SELECT ZakupioneProdukty.IDproduktu, Produkty.Produkt, Produkty.Marka, Produkty.Kategoria, Produkty.Cena, Ilosc, DataWaznosci FROM ZakupioneProdukty INNER JOIN Produkty ON ZakupioneProdukty.IDproduktu = Produkty.IDproduktu");
             if (this.IDproduktuWLodowce!=null){
                 this.produktWLodowce.clear();
                 this.markaWLodowce.clear();
@@ -62,9 +64,10 @@ public class Lodowka extends MyHandler{
                 }
             }
             System.out.println("Lista Pobrana");
-
         }
-        catch (Exception e){System.out.println(e);}
+        catch (Exception e){System.out.println(e);}finally {
+            IConnectable.ClosingConnection(con,null, stmt, res);
+        }
     }
 
 
@@ -80,13 +83,15 @@ public class Lodowka extends MyHandler{
     }
 
     public void Zjedz(int IDproduktuWLodowce, int iloscProduktowKtoreZjadles){
+        Connection con = IConnectable.connectDefault();
+        Statement stmt = null;
+        ResultSet res = null;
         try{
             List<Integer> IDzakupow = new ArrayList<>();
             int ileDoOdjęcia = 0, iloscDoOdjeciaZOstatnichZakupow =0;
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
-            Statement stmt = con.createStatement();
+            stmt = con.createStatement();
             String query = "SELECT * FROM ZakupioneProdukty WHERE IDproduktu = "+IDproduktuWLodowce;
-            ResultSet res = stmt.executeQuery(query);
+            res = stmt.executeQuery(query);
             if (res.wasNull())throw new IndexOutOfBoundsException();
             while (res.next()){
                 IDzakupow.add(res.getInt(1));
@@ -111,7 +116,9 @@ public class Lodowka extends MyHandler{
                 }
             }
         }
-        catch (Exception e){System.out.println(e);}
+        catch (Exception e){System.out.println(e);}finally {
+            IConnectable.ClosingConnection(con,null, stmt, res);
+        }
     }
 
     public String UsuwanieZakopow(List<Integer> IDzakupow, int idProduktu){

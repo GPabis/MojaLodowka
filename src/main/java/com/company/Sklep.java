@@ -4,8 +4,9 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import com.mysql.jdbc.Driver;
 
-public class Sklep extends ProduktyWLodowce{
+public class Sklep extends ProduktyWLodowce implements IConnectable{
 
     /**
      * Sklep Class is used to adding new product to our store (Lodówka),
@@ -29,7 +30,7 @@ public class Sklep extends ProduktyWLodowce{
     static {
         try{
             Class.forName("com.mysql.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
+            Connection con = IConnectable.connectDefault();
             Statement stmt = con.createStatement();
             String tworzenieTabeliZakupy = "CREATE TABLE IF NOT EXISTS Zakupy" +
                     "(IDzakupow INT(3) NOT NULL AUTO_INCREMENT," +
@@ -46,6 +47,8 @@ public class Sklep extends ProduktyWLodowce{
             stmt.executeUpdate(tworzenieTabeliZakupy);
             stmt.executeUpdate(tworzenieTabeliZakupioneProdukty);
             System.out.println("Tabela Zakupy Gotowa");
+            stmt.close();
+            con.close();
         }
         catch (Exception e){System.out.println(e);}
     }
@@ -225,14 +228,17 @@ public class Sklep extends ProduktyWLodowce{
     }
 
     public void DodajZakupyDoBazyDanych(){
+        Connection con = IConnectable.connectDefault();
+        Statement stmt = null;
+        ResultSet rs = null;
+        PreparedStatement zakupyPrepStmt = null;
         try {
             if (this.listaProduktowWKoszyku.size()==0) throw new IndexOutOfBoundsException();
-            Connection con = DriverManager.getConnection("jdbc:mysql://85.194.242.107:3306/m11794_BazaLodowka", "m11794_GPabis", "HaslO2020");
-            Statement stmt = con.createStatement();
-            PreparedStatement zakupyPrepStmt = con.prepareStatement("INSERT into Zakupy values (default,?)");
+            stmt = con.createStatement();
+            zakupyPrepStmt = con.prepareStatement("INSERT into Zakupy values (default,?)");
             zakupyPrepStmt.setDate(1,java.sql.Date.valueOf(this.dataZakupow));
             zakupyPrepStmt.executeUpdate();
-            ResultSet rs = stmt.executeQuery("SELECT IDzakupow FROM Zakupy");
+            rs = stmt.executeQuery("SELECT IDzakupow FROM Zakupy");
             if (rs.last()) this.numerZakupow = rs.getInt(1);
             PreparedStatement prepStmt = con.prepareStatement("insert into ZakupioneProdukty values(?,?,?,?)");
             for (int i = 0; i<this.listaProduktowWKoszyku.size(); i++){
@@ -242,8 +248,11 @@ public class Sklep extends ProduktyWLodowce{
                 prepStmt.setDate(4, java.sql.Date.valueOf(this.dataWaznosci.get(i)));
                 prepStmt.executeUpdate();
             }
+            prepStmt.close();
         }
-        catch (Exception e){System.out.println(e);}
+        catch (Exception e){System.out.println(e);}finally {
+            IConnectable.ClosingConnection(con, zakupyPrepStmt, stmt, rs);
+        }
     }
 
 

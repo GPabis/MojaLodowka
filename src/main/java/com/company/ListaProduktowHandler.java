@@ -5,15 +5,12 @@ import java.net.InetSocketAddress;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-import org.json.JSONArray;
-
-public class MyHandler implements HttpHandler {
+public class ListaProduktowHandler implements HttpHandler{
     @Override
     public void handle(HttpExchange t) throws IOException {
-        Lodowka lodowka1 = new Lodowka();
-        lodowka1.PobieraniePordoktowWLodowce();
-        String produktyJSON = lodowka1.ProduktyJSON().toString();
+        ListaIstniejacychProduktow lista = new ListaIstniejacychProduktow();
+        lista.PobieranieProduktuZBazyDanych();
+        String produktyJSON = lista.ProduktyJSON().toString();
         String encoding = "UTF-8";
         t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
         t.getResponseHeaders().add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");

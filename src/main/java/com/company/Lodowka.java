@@ -1,15 +1,20 @@
 package com.company;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
+
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import org.json.*;
 
 
 
-public class Lodowka extends MyHandler implements IConnectable{
+public class Lodowka extends MyHandler implements IConnectable, HttpHandler {
 
     private List<String> produktWLodowce;
     private List<String> markaWLodowce;
@@ -63,7 +68,6 @@ public class Lodowka extends MyHandler implements IConnectable{
                     this.cenaWLodowce.set(i, powiekszonaCena);
                 }
             }
-            System.out.println("Lista Pobrana");
         }
         catch (Exception e){System.out.println(e);}finally {
             IConnectable.ClosingConnection(con,null, stmt, res);
@@ -108,7 +112,7 @@ public class Lodowka extends MyHandler implements IConnectable{
                 stmt.executeUpdate(UsuwanieZakopow(IDzakupow, IDproduktuWLodowce));
             }
             else {
-                if (IDzakupow.size()>1){
+                if (IDzakupow.size()>1 || ileDoOdjęcia == iloscProduktowKtoreZjadles){
                     stmt.executeUpdate(UsuwanieZakopow(IDzakupow, IDproduktuWLodowce));
                 }
                 else {

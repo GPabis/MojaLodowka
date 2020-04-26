@@ -97,15 +97,7 @@ public class Sklep extends ProduktyWLodowce implements IConnectable{
      * @param listaWszystkichProduktow          list of existing product
      */
 
-    public void Zakupy(ListaIstniejacychProduktow listaWszystkichProduktow){
-        int nrId = -1;
-        while (nrId !=0) {
-            System.out.println("Witamy w sklepie, proszę wybierz jakie produkt chcesz kupić: \n [Wypisz ID produktu]");
-            WypiszListeDostepnychProduktow(listaWszystkichProduktow);
-            System.out.println("Wpisz \"0\" by zakończyć zakupy");
-            Scanner sr = new Scanner(System.in);
-            nrId = sr.nextInt();
-            if (nrId == 0) continue;
+    public void Zakupy(ListaIstniejacychProduktow listaWszystkichProduktow, int nrId){
             Produkty wybranyProdukt = listaWszystkichProduktow.WybierzProdukt(nrId);
             if (!listaProduktowWKoszyku.contains(wybranyProdukt)) {
                 listaProduktowWKoszyku.add(wybranyProdukt);
@@ -116,8 +108,6 @@ public class Sklep extends ProduktyWLodowce implements IConnectable{
                 iloscDanegoProduktu.set(listaProduktowWKoszyku.indexOf(wybranyProdukt), iloscProduktu);
             }
             this.cenaProduktow += wybranyProdukt.cena;
-
-        }
     }
 
     /**

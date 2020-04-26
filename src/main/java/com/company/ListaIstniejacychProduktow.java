@@ -1,5 +1,8 @@
 package com.company;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -15,18 +18,6 @@ public class ListaIstniejacychProduktow extends Sklep implements IConnectable{
          * Constructior of Class ListaIstniejacychProduktow containing list of all existing products
          */
         this.listaIstniejacychProduktow = new ArrayList<>();
-    }
-
-
-    public void DodajDoListyIstniejacychProduktow(){
-        /**
-         * DodajDoListyIstniejacychProduktow is adding specific product to listaIstniejacychProduktow list.
-         * @param produkt       adding product object
-         */
-        for (int i = PobieranieIDPierwszegoProduktu(); i <= PobieranieIDOstatniegoProduktu(); i++){
-            Produkty dodawanyProdukt = PobieranieProduktuZBazyDanych(i);
-            if (dodawanyProdukt != null) this.listaIstniejacychProduktow.add(dodawanyProdukt);
-        }
     }
 
     public String toString(){
@@ -58,7 +49,7 @@ public class ListaIstniejacychProduktow extends Sklep implements IConnectable{
     }
 
 
-    public Produkty PobieranieProduktuZBazyDanych(int IDproduktu){
+    public Produkty PobieranieProduktuZBazyDanych(){
 
         /**
          * Method is using for geting specific product from database.
@@ -66,7 +57,7 @@ public class ListaIstniejacychProduktow extends Sklep implements IConnectable{
          * @return                  returning Product object.
          */
 
-        String zapytanieSelectProdukt = "SELECT * FROM Produkty WHERE IDproduktu = " + IDproduktu;
+        String zapytanieSelectProdukt = "SELECT * FROM Produkty";
         Connection con = IConnectable.connectDefault();
         Statement stmt = null;
         ResultSet res = null;
@@ -74,10 +65,11 @@ public class ListaIstniejacychProduktow extends Sklep implements IConnectable{
         try{
             stmt = con.createStatement();
             res = stmt.executeQuery(zapytanieSelectProdukt);
-            if (res.next()){
-                Produkty.Kategoria kategoria = Produkty.Kategoria.valueOf(res.getString(4));
-                pobranyProdukt = new Produkty(res.getString(2),res.getString(3), kategoria,res.getDouble(5), res.getInt(6));
-                pobranyProdukt.produktID = res.getInt(1);
+            while (res.next()){
+                    Produkty.Kategoria kategoria = Produkty.Kategoria.valueOf(res.getString(4));
+                    pobranyProdukt = new Produkty(res.getString(2),res.getString(3), kategoria,res.getDouble(5), res.getInt(6));
+                    pobranyProdukt.produktID = res.getInt(1);
+                    this.listaIstniejacychProduktow.add(pobranyProdukt);
             }
         }
         catch (Exception e){System.out.println(e);}finally {
@@ -149,5 +141,24 @@ public class ListaIstniejacychProduktow extends Sklep implements IConnectable{
         }
         if (numerOstatniegoIndexu ==0)System.out.println("Tabela Produkty Jest Pusta");
         return numerOstatniegoIndexu;
+    }
+
+    public JSONObject ProduktyJSON(){
+        JSONObject produktyJson = new JSONObject();
+        JSONArray produkty = new JSONArray ();
+        Produkty produkt;
+        for (int i = 0; i < this.listaIstniejacychProduktow.size(); i++){
+            produkt = this.listaIstniejacychProduktow.get(i);
+            JSONObject produktJson = new JSONObject();
+            produktJson.put("produkt", produkt.produkt);
+            produktJson.put("marka", produkt.marka);
+            produktJson.put("kategoria", produkt.przypisanaKategoria);
+            produktJson.put("cena", produkt.cena);
+            produktJson.put("id", produkt.produktID);
+            produktJson.put("iloscDniNimSiePrzeterminuje", produkt.iloscDniNimSiePrzeterminuje);
+            produkty.put(produktJson);
+        }
+        produktyJson.put("produkty", produkty);
+        return produktyJson;
     }
 }

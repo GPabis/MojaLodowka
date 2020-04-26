@@ -25,7 +25,6 @@ public class Produkty extends ListaIstniejacychProduktow implements IConnectable
     public double cena;
     public int produktID;
     public int iloscDniNimSiePrzeterminuje;
-
     /**
      * Auto increment of ID of each created product
      */
